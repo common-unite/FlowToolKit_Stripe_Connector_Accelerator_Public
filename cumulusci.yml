@@ -3,6 +3,7 @@ project:
     name: cUnite_Stripe_Connector_Accelerator
     package:
         name: "Flow Tool Kit: Stripe Connector Accelerator"
+        namespace: FlowToolKit
         api_version: '55.0'
     dependencies:
         - github: 'https://github.com/common-unite/Flow_Tool_Kit_Public'
@@ -19,7 +20,7 @@ tasks:
             branch: "main"
             create_release: true
             release_body: true
-            include: [ "cumulusci.yml","sfdx-project.json","orgs/" ]
+            include: [ "cumulusci.yml","sfdx-project.json","orgs/","README.md" ]
 
     robot:
         options:
@@ -35,6 +36,40 @@ tasks:
     run_tests:
         options:
             required_org_code_coverage_percent: 75
+
+    scan_csv:
+        description: Scan a CSV file for a specific value
+        class_path: tasks.ScanCSVTask.ScanCSVTask
+        options:
+            csv_file_path: myFile.csv
+            value_to_scan: Book
+
+flows:
+
+    release_2gp_beta:
+        steps:
+            90:
+                task: github_copy_subtree
+                options:
+                    tag_name: "latest_beta"
+
+
+    release_2gp_production:
+        steps:
+            90:
+                task: github_copy_subtree
+                options:
+                    tag_name: "latest"
+
+    testing:
+        steps:
+            1:
+                task: scan_csv
+            2:
+                task: log
+                when: ^^scan_csv.found
+                options:
+                    line: ^^scan_csv.response
 
 orgs:
     scratch:
