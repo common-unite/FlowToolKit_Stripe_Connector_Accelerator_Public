@@ -1,6 +1,7 @@
 {
   "orgName": "Flow Tool Kit: Stripe Connector Accelerator - Beta Test Org",
   "edition": "Developer",
+  "release": "preview",
   "settings": {
     "lightningExperienceSettings": {
       "enableS1DesktopEnabled": true
@@ -16,5 +17,6 @@
       "sessionSettings": {
         "forceRelogin": false
       }
-    }  }
+    }
+  }
 }

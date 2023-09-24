@@ -67,9 +67,8 @@ flows:
                 task: scan_csv
             2:
                 task: log
-                when: ^^scan_csv.found
                 options:
-                    line: ^^scan_csv.response
+                    line: $org_config.found
 
 orgs:
     scratch:
