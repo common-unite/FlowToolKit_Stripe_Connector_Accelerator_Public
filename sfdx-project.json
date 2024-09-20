@@ -8,5 +8,5 @@
   "name": "cUnite_Stripe_Connector_Accelerator",
   "namespace": "FlowToolKit",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "58.0"
+  "sourceApiVersion": "61.0"
 }
