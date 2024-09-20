@@ -7,7 +7,7 @@ project:
         api_version: '55.0'
     dependencies:
         - github: 'https://github.com/common-unite/Flow_Tool_Kit_Public'
-        - version_id: 04tRN00000002HxYAI
+        - version_id: 04tRN0000000CPNYA2
         - version_id: 04t4x0000003MzaAAE
     git:
     source_format: sfdx
