@@ -4,10 +4,10 @@ project:
     package:
         name: "Flow Tool Kit: Stripe Connector Accelerator"
         namespace: FlowToolKit
-        api_version: '55.0'
+        api_version: '64.0'
     dependencies:
         - github: 'https://github.com/common-unite/Flow_Tool_Kit_Public'
-        - version_id: 04tRN0000000CPNYA2
+        - version_id: 04tRN000004ZhkXYAS
         - version_id: 04t4x0000003MzaAAE
     git:
     source_format: sfdx
