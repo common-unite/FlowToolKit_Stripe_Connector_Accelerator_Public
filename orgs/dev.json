@@ -16,9 +16,27 @@
       "sessionSettings": {
         "forceRelogin": false
       }
-    },
-    "languageSettings": {
-      "enableTranslationWorkbench": true
     }
-  }
+  },
+  "features": [
+    "AccountingSubledgerUser",
+    "AccountingSubledgerGrowthEdition",
+    "AccountingSubledgerStarterEdition",
+    "BusinessRulesEngine",
+    "Communities",
+    "ContactsToMultipleAccounts",
+    "CustomerCommunityPlus",
+    "DataProcessingEngine",
+    "DefaultWorkflowUser",
+    "DocGenDesigner",
+    "DocGenInd",
+    "ExperienceBundle",
+    "Fundraising",
+    "Grantmaking",
+    "IndustriesActionPlan",
+    "NonprofitCloudCaseManagementUser",
+    "PartnerCommunity",
+    "PersonAccounts",
+    "ProgramManagement"
+  ]
 }

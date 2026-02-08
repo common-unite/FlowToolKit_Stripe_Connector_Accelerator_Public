@@ -4,7 +4,7 @@ project:
     package:
         name: "Flow Tool Kit: Stripe Connector Accelerator"
         namespace: FlowToolKit
-        api_version: '64.0'
+        api_version: '65.0'
     dependencies:
         - github: 'https://github.com/common-unite/Flow_Tool_Kit_Public'
         - version_id: 04tRN000004ZhkXYAS
@@ -20,7 +20,7 @@ tasks:
             branch: "main"
             create_release: true
             release_body: true
-            include: [ "cumulusci.yml","sfdx-project.json","orgs/","README.md" ]
+            include: [ "cumulusci.yml","sfdx-project.json","orgs/","README.md","docs/" ]
 
     robot:
         options:
@@ -76,3 +76,7 @@ orgs:
             config_file: orgs/dev.json
             days: 30
             namespaced: True
+        dev_unnamespaced:
+            config_file: orgs/dev.json
+            days: 30
+            namespaced: False
