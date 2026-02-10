@@ -14,6 +14,7 @@ Detailed reference for admins implementing the Stripe Connector Accelerator. Cov
 6. [Platform Events](#6-platform-events)
 7. [Pre-Built Flows Reference](#7-pre-built-flows-reference)
 8. [Important Considerations](#8-important-considerations)
+9. [Troubleshooting](#9-troubleshooting)
 
 ---
 
@@ -589,3 +590,42 @@ The package installs custom fields on standard objects. Make sure the appropriat
 ### API Callout Limits
 
 Stripe API calls count toward Salesforce's callout limits. Each payment, setup, or subscription creation uses 2-3 callouts. The background sync flows (customer, product, invoice) each use 1-2 callouts per record. Platform events handle these asynchronously to avoid hitting limits during record triggers.
+
+---
+
+## 9. Troubleshooting
+
+### Stripe Payment Component Not Loading (Older Orgs)
+
+**Symptom:** The Stripe Payment Component fails to load in Experience Cloud pages or the Flow debug screen. The iframe area is blank or blocked.
+
+**Affected orgs:** Older Salesforce orgs (typically 10+ years old, created before Enhanced Domains). This is **not required** for newer orgs.
+
+**Cause:** Older orgs don't have trusted domains configured for Visualforce iframe embedding. The clickjack protection blocks the Visualforce page (`StripePaymentForm`) from rendering inside the Lightning Web Component iframe.
+
+**Fix:**
+
+1. Go to **Setup > Session Settings**
+2. Scroll to **Trusted Domains for Inline Frames**
+3. Ensure one of the "Enable clickjack protection for customer Visualforce pages" preferences is turned on under **Clickjack Protection**
+4. Add the following trusted domains with IFrame Type set to **Visualforce Pages**:
+
+| Domain | IFrame Type |
+|--------|-------------|
+| `*.my.salesforce.com` | Visualforce Pages |
+| `*.lightning.force.com` | Visualforce Pages |
+
+After adding these, the payment component should load normally.
+
+### "Validation Errors" After Package Upgrade (Overridden Flows)
+
+**Symptom:** After upgrading the Stripe Connector Accelerator package, overridden flows crash with the error: *"The 'X' element in your flow has validation errors."* The flow does not fault — it crashes entirely. Non-overridden flows and newly created flows work fine.
+
+**Cause:** When you override an overridable flow, the overridden version takes a snapshot of the action element definitions. When the managed package upgrades and the underlying Apex classes change, overridden flows may hold stale references that no longer match the updated action definitions. This is a Salesforce platform limitation — overridden flows don't automatically pick up changes to managed package action elements.
+
+**Fix:**
+
+1. Deactivate the overridden flow that is crashing
+2. Open the corresponding original packaged flow (or Template flow) — it will have the updated action definitions
+3. Create a new override from the updated original, re-applying your customizations
+4. Activate the new override and delete the old one
