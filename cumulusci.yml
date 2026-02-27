@@ -14,6 +14,9 @@ project:
 
 tasks:
 
+    export_form:
+        class_path: cci_flowtoolkit_tasks.export_form.ExportFormMetadata
+
     github_copy_subtree:
         options:
             repo_url: "https://github.com/common-unite/FlowToolKit_Stripe_Connector_Accelerator_Public"
@@ -45,6 +48,13 @@ tasks:
             value_to_scan: Book
 
 flows:
+
+    dev_org:
+        steps:
+            5:
+                task: deploy
+                options:
+                    path: force-app-form-templates
 
     release_2gp_beta:
         steps:

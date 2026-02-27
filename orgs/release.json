@@ -11,10 +11,18 @@
     "userManagementSettings": {
       "enableNewProfileUI": true
     },
+    "experienceBundleSettings": {
+      "enableExperienceBundleMetadata": true
+    },
     "securitySettings": {
       "enableAdminLoginAsAnyUser": true,
       "sessionSettings": {
         "forceRelogin": false
       }
-    }  }
+    }
+  },
+  "features": [
+    "Communities",
+    "ExperienceBundle"
+  ]
 }

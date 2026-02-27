@@ -3,6 +3,12 @@
     {
       "path": "force-app",
       "default": true
+    },
+    {
+      "path": "site"
+    },
+    {
+      "path": "force-app-form-templates"
     }
   ],
   "name": "cUnite_Stripe_Connector_Accelerator",
