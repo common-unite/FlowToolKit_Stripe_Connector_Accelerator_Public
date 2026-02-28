@@ -11,9 +11,6 @@
     "userManagementSettings": {
       "enableNewProfileUI": true
     },
-    "experienceBundleSettings": {
-      "enableExperienceBundleMetadata": true
-    },
     "securitySettings": {
       "enableAdminLoginAsAnyUser": true,
       "sessionSettings": {
@@ -21,8 +18,5 @@
       }
     }
   },
-  "features": [
-    "Communities",
-    "ExperienceBundle"
-  ]
+  "features": []
 }
