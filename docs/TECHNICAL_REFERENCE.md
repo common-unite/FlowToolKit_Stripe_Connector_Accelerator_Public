@@ -629,3 +629,27 @@ After adding these, the payment component should load normally.
 2. Open the corresponding original packaged flow (or Template flow) — it will have the updated action definitions
 3. Create a new override from the updated original, re-applying your customizations
 4. Activate the new override and delete the old one
+
+### Stripe Payment Component Not Loading in Lightning Out (Third-Party Sites)
+
+**Symptom:** The Stripe Payment Component fails to load when embedded on a third-party website (Squarespace, Wix, WordPress, etc.) via Lightning Out. The component area is blank or shows "refused to connect."
+
+**Cause:** Lightning Out renders Salesforce components inside an iframe on the third-party site. By default, Salesforce's Content Security Policy (CSP) blocks framing by external domains. The third-party domain must be explicitly whitelisted.
+
+**Fix:**
+
+1. Go to **Setup > Session Settings**
+2. Under **Clickjack Protection**, check: **"Enable clickjack protection for customer Visualforce pages with standard headers"**
+3. Scroll to **Trusted Domains for Inline Frames** and click **Add Domain**
+4. Add the third-party domain with IFrame Type set to **Lightning Out**:
+
+| Domain | IFrame Type |
+|--------|-------------|
+| `*.squarespace.com` | Lightning Out |
+
+Replace `*.squarespace.com` with the domain of the website hosting your Lightning Out component. Wildcard domains are supported.
+
+**Important:**
+- The iFrame Type must be **Lightning Out** — not Visualforce Pages. These control different CSP headers.
+- Each third-party platform your organization uses needs its own Trusted Domain entry.
+- The clickjack protection checkbox must be enabled for Trusted Domains to take effect.

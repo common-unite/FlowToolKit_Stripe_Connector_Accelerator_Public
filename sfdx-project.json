@@ -1,14 +1,8 @@
 {
   "packageDirectories": [
     {
-      "path": "force-app",
+      "path": "site",
       "default": true
-    },
-    {
-      "path": "site"
-    },
-    {
-      "path": "force-app-form-templates"
     }
   ],
   "name": "cUnite_Stripe_Connector_Accelerator",

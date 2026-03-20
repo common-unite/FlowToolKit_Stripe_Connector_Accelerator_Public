@@ -1,0 +1,33 @@
+{
+  "orgName": "Stripe Connector Accelerator - Site Design Org",
+  "edition": "Developer",
+  "hasSampleData": false,
+  "features": [
+    "Communities",
+    "CustomerCommunityPlus",
+    "ExperienceBundle"
+  ],
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "chatterSettings": {
+      "enableChatter": true
+    },
+    "userManagementSettings": {
+      "enableNewProfileUI": true
+    },
+    "securitySettings": {
+      "enableAdminLoginAsAnyUser": true,
+      "sessionSettings": {
+        "forceRelogin": false
+      }
+    },
+    "communitiesSettings": {
+      "enableNetworksEnabled": true
+    },
+    "experienceBundleSettings": {
+      "enableExperienceBundleMetadata": true
+    }
+  }
+}

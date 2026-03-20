@@ -1,18 +1,35 @@
 {
-  "orgName": "Flow Tool Kit: Stripe Connector Accelerator - Dev Org",
+  "orgName": "Flow Tool Kit: Stripe Connector Accelerator - NPC Dev Org",
   "edition": "Developer",
   "hasSampleData": false,
   "features": [
     "PlatformCache",
     "ProviderFreePlatformCache",
+    "ArcGraphCommunity",
+    "Assessments",
+    "BusinessRulesEngine",
     "Communities",
     "ContactsToMultipleAccounts",
     "CustomerCommunityPlus",
+    "DataProcessingEngine",
+    "DecisionTable",
     "DefaultWorkflowUser",
+    "DocGenInd",
+    "DocumentChecklist",
     "EnableSetPasswordInApi",
     "ExperienceBundle",
+    "Fundraising",
+    "Grantmaking",
+    "IndustriesActionPlan",
     "MarketingUser",
-    "PartnerCommunity"
+    "NonprofitCloudCaseManagementUser",
+    "OmnistudioDesigner",
+    "OmnistudioRuntime",
+    "OutcomeManagement",
+    "PartnerCommunity",
+    "PersonAccounts",
+    "ProgramManagement",
+    "StateAndCountryPicklist"
   ],
   "settings": {
     "lightningExperienceSettings": {
@@ -42,11 +59,24 @@
     "flowSettings": {
       "enableFlowPauseEnabled": true
     },
+    "industriesSettings": {
+      "enableBenefitManagementPreference": true,
+      "enableBenefitAndGoalSharingPref": true,
+      "enableCarePlansPreference": true,
+      "enableGrantmaking": true,
+      "enableGroupMembershipPref": true,
+      "enableOutcomes": true
+    },
     "communitiesSettings": {
+      "enableCommunityWorkspaces": true,
       "enableNetworksEnabled": true
     },
     "experienceBundleSettings": {
       "enableExperienceBundleMetadata": true
+    },
+    "nameSettings": {
+      "enableMiddleName": true,
+      "enableNameSuffix": true
     }
   },
   "objectSettings": {

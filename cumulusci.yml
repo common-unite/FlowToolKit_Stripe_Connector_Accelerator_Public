@@ -55,6 +55,99 @@ flows:
                 task: deploy
                 options:
                     path: force-app-form-templates
+            6:
+                task: deploy
+                options:
+                    path: site
+            7:
+                task: create_community
+                options:
+                    name: Stripe Marketing
+                    template: Build Your Own
+                    url_path_prefix: stripe
+                    skip_existing: True
+                    timeout: 120
+            8:
+                task: deploy
+                options:
+                    path: site-experiences
+            9:
+                task: publish_community
+                options:
+                    name: Stripe Marketing
+
+    site_dev_org:
+        description: Lightweight org for designing and testing site marketing components (no dependencies, no Apex)
+        steps:
+            1:
+                task: deploy
+                options:
+                    path: site
+            2:
+                task: create_community
+                options:
+                    name: Stripe Marketing
+                    template: Build Your Own
+                    url_path_prefix: stripe
+                    skip_existing: True
+                    timeout: 120
+            3:
+                task: deploy
+                options:
+                    path: site-experiences-local
+            4:
+                task: publish_community
+                options:
+                    name: Stripe Marketing
+
+    npc_dev_org:
+        description: Set up an NPC scratch org with Grantmaking, OmniStudio, Action Plans, and Experience Cloud
+        steps:
+            1:
+                flow: dependencies
+            2:
+                flow: deploy_unmanaged
+            3:
+                task: deploy
+                options:
+                    path: force-app-form-templates
+            4:
+                task: deploy
+                options:
+                    path: site
+            5:
+                task: assign_permission_sets
+                options:
+                    api_names: Form_Builder_Admin,Form_Flow_User
+                ignore_failure: True
+            6:
+                task: assign_permission_set_licenses
+                options:
+                    api_names: OmniStudioPsl,ActionPlansPsl,GrantmakingUserPsl,FundraisingAccessPsl,ProgramAndBenefitManagementPsl,DynamicAssessmentsPsl
+                ignore_failure: True
+            7:
+                task: assign_permission_sets
+                options:
+                    api_names: OmniStudioAdmin,ActionPlans,GrantmakingManager,FundraisingAccess,ProgramAndBenefitManagementAccess,DynamicAssessmentAccess,GroupMembership,DataPipelinesBaseUser,DocumentChecklist
+                ignore_failure: True
+            8:
+                task: create_community
+                options:
+                    name: Stripe Marketing
+                    template: Build Your Own
+                    url_path_prefix: stripe
+                    skip_existing: True
+                    timeout: 120
+            9:
+                task: deploy
+                options:
+                    path: site-experiences
+            10:
+                task: publish_community
+                options:
+                    name: Stripe Marketing
+            11:
+                task: snapshot_changes
 
     release_2gp_beta:
         steps:
@@ -90,3 +183,11 @@ orgs:
             config_file: orgs/dev.json
             days: 30
             namespaced: False
+        site:
+            config_file: orgs/site.json
+            days: 7
+            namespaced: False
+        npc:
+            config_file: orgs/npc.json
+            days: 7
+            namespaced: True
