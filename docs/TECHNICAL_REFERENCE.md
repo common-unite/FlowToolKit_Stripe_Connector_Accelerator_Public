@@ -29,7 +29,7 @@ Collects a one-time payment or authorized charge. This is the primary payment co
 | Input | Type | Required | Description |
 |-------|------|----------|-------------|
 | Amount | Number | Yes | Payment amount in **cents**. Example: 5000 = $50.00. Minimum: 50 ($0.50). |
-| Capture Method | Text | Yes | How funds are captured: `automatic` (charge immediately), `manual` (authorize now, capture later), or `async`. |
+| Capture Method | Text | Yes | How funds are captured: `automatic` (charge immediately), `automatic_async` (charge immediately with lower latency — recommended, supports all payment methods including ACH), or `manual` (authorize now, capture later). |
 | Currency | Text | No | 3-letter currency code (e.g., `usd`, `eur`, `gbp`). Defaults to `usd`. |
 | Description | Text | No | Description that appears on the payment in Stripe. |
 | Customer ID | Text | No | Stripe Customer ID (starts with `cus_`). Optional for payments, but useful for tracking. |
@@ -59,6 +59,10 @@ Collects a one-time payment or authorized charge. This is the primary payment co
 | Payment Intent Id | Text | The Stripe PaymentIntent ID (starts with `pi_`). Store this on your records. |
 | Payment Method Id | Text | The Stripe PaymentMethod ID (starts with `pm_`). |
 | Payment Method Type | Text | The type of payment method used (e.g., `card`, `us_bank_account`). |
+| Charge Id | Text | The Stripe Charge ID for this transaction. |
+| Receipt URL | Text | URL to the Stripe-hosted receipt for this payment. |
+| Processing Fee | Text | Calculated Stripe processing fee in dollars (e.g., `3.30`) based on the custom setting Processing Fee Multiplier and Transaction Fee values. |
+| Net Amount (After Fees) | Text | Payment amount minus processing fees — the amount received after Stripe fees are deducted. |
 | Card Brand | Text | Card brand: `visa`, `mastercard`, `amex`, `discover`, etc. |
 | Card Last 4 | Text | Last 4 digits of the card number. |
 | Card Expiration Month | Number | Card expiration month (1-12). |
@@ -186,13 +190,25 @@ The modal organizes mappings into sections:
 - **Address Line 1, Line 2, City, State, Country, Postal Code** — Map address fields
 
 **Payment Outputs** (where to store results after payment):
-- **Payment Intent ID, Payment Method ID** — Map Text fields
+- **Payment Intent ID, Payment Method ID, Charge ID** — Map Text fields
+- **Receipt URL** — Map a URL or Text field
+- **Processing Fee** — Map a Currency field. Calculated using the reverse fee formula: `(amount × rate + fixedFee) / (1 - rate)`. This accounts for fee-on-fee when donors cover processing costs.
 - **Card Brand, Last 4, Expiration Month/Year, Funding, Country** — Map Text/Number fields
+
+**Additional Output Mappings** (map Stripe outputs to extra fields):
+
+When a Stripe output value needs to be written to more than one field on the object (e.g., Payment Intent ID mapped to both `Stripe_Payment_Intent_Id__c` and `PaymentIdentifier`), use the Additional Output Mappings section. This accordion section (collapsed by default) provides a repeater where admins can:
+
+1. Select a **Target Field** from the object (fields already mapped in fixed mappings are excluded)
+2. Select a **Stripe Output** parameter — filtered by the target field's data type, with descriptions explaining each output
+3. Add multiple additional mappings as needed
+
+Available Stripe output parameters include: Payment Intent Id, Payment Method Id, Charge Id, Subscription Id, Setup Intent Id, Receipt URL, Processing Fee, Net Amount (After Fees), and all card and billing details.
 
 #### Other Settings
 
 - **Currency** — ISO currency code
-- **Capture Method** — automatic or manual
+- **Capture Method** — `automatic_async` (default, recommended by Stripe — supports all payment methods including ACH)
 - **Enable Link** — Stripe Link fast checkout
 - **Enable Address** — Address collection in the payment form
 - **Hide Header** — Hide the payment form header
@@ -201,7 +217,9 @@ The modal organizes mappings into sections:
 
 - The form displays first. The payment component appears after the user clicks "Continue to Payment."
 - If the **Payment Type** field routes to "subscription", the component creates a subscription instead of a one-time payment.
-- After payment, the results are written back to the mapped output fields and the record is saved automatically.
+- After payment, the results are written back to the mapped output fields (including additional mappings) and the record is saved automatically.
+- If a **Confirmation Message** is configured, it displays after the record saves successfully. If a Receipt URL was captured, a "View Receipt" button opens the Stripe-hosted receipt in a new tab.
+- If the record save fails (e.g., validation rule), the form reappears with a "Retry Save" button. The payment is not re-processed — only the record insert is retried.
 
 ---
 
@@ -347,8 +365,8 @@ Access these via **Setup > Custom Settings**.
 | Field | What It Controls |
 |-------|-----------------|
 | **Test Mode** | When checked, forces test mode even in production. Useful for testing before going live. |
-| **Transaction Fee** | Flat fee added to transactions (if your org charges processing fees). |
-| **Processing Fee Multiplier** | Percentage-based processing fee multiplier. |
+| **Transaction Fee** | Stripe's flat fee per transaction (default: $0.30). Used to calculate processing fees with the reverse formula: `(amount × rate + fixedFee) / (1 - rate)`. |
+| **Processing Fee Multiplier** | Stripe's percentage rate per transaction (default: 0.029 = 2.9%). Used with Transaction Fee to calculate processing fees that account for fee-on-fee when donors cover costs. |
 | **Apple Developer Domain Resource** | Name of the static resource containing the Apple Pay domain verification file. Required only if you're enabling Apple Pay on a custom domain. |
 
 #### Stripe Payment Settings
@@ -452,6 +470,11 @@ If you use the FlowToolKit Form Builder with payment forms, these fields store p
 | Subscription Id | Stripe Subscription ID |
 | Invoice Id | Stripe Invoice ID |
 | Payment Method Id | Stripe Payment Method ID |
+| Charge Id | Stripe Charge ID |
+| Receipt URL | URL to the Stripe-hosted payment receipt |
+| Stripe Processing Fee | Formula: calculated fee using `(amount × rate + fixedFee) / (1 - rate)`. Accounts for fee-on-fee when donors cover processing costs. |
+| Stripe Amount | Formula: base amount + processing fee (when Cover Fees is checked) |
+| Stripe Cover Fees | Checkbox: whether the donor opted to cover processing fees |
 | Card Brand, Last 4, Exp Month, Exp Year, Funding, Country | Card details from the payment |
 
 ---
