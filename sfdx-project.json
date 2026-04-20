@@ -3,6 +3,9 @@
     {
       "path": "force-app",
       "default": true
+    },
+    {
+      "path": "force-app-unpackaged"
     }
   ],
   "name": "cUnite_Stripe_Connector_Accelerator",
