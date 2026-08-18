@@ -51,6 +51,11 @@ flows:
 
     dev_org:
         steps:
+            4.5:
+                task: assign_permission_sets
+                options:
+                    api_names: Form_Builder_Admin,Form_Flow_User,Form_Flow_Payments_User
+                ignore_failure: True
             5:
                 task: deploy
                 options:
@@ -118,7 +123,7 @@ flows:
             5:
                 task: assign_permission_sets
                 options:
-                    api_names: Form_Builder_Admin,Form_Flow_User
+                    api_names: Form_Builder_Admin,Form_Flow_User,Form_Flow_Payments_User
                 ignore_failure: True
             6:
                 task: assign_permission_set_licenses
@@ -189,5 +194,9 @@ orgs:
             namespaced: False
         npc:
             config_file: orgs/npc.json
+            days: 7
+            namespaced: True
+        feature_stripe-payment-iframe-preload:
+            config_file: orgs/dev.json
             days: 7
             namespaced: True

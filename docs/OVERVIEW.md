@@ -1,6 +1,6 @@
-# Stripe Connector Accelerator — Overview
+# Stripe Connector Accelerator - Overview
 
-The Stripe Connector Accelerator extends the Stripe Connector for Salesforce and the Flow Tool Kit to let you collect payments, save payment methods, and create subscriptions directly inside Salesforce Flows and Experience Cloud pages — no code required.
+The Stripe Connector Accelerator extends the Stripe Connector for Salesforce and the Flow Tool Kit to let you collect payments, save payment methods, and create subscriptions directly inside Salesforce Flows and Experience Cloud pages - no code required.
 
 **Prerequisites:** The following packages must be installed in order before this package.
 
@@ -11,10 +11,10 @@ The Stripe Connector Accelerator extends the Stripe Connector for Salesforce and
 
 **Step 2: Stripe Connector for Salesforce (2 packages)**
 
-Stripe Connector — Package 1:
+Stripe Connector - Package 1:
 - [Production & Developer Edition Orgs](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tRN000004ZhkXYAS) | [Sandbox & Scratch Orgs](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tRN000004ZhkXYAS)
 
-Stripe Connector — Package 2:
+Stripe Connector - Package 2:
 - [Production & Developer Edition Orgs](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t4x0000003MzaAAE) | [Sandbox & Scratch Orgs](https://test.salesforce.com/packaging/installPackage.apexp?p0=04t4x0000003MzaAAE)
 
 **Step 3: Stripe Connector Accelerator**
@@ -25,7 +25,7 @@ Stripe Connector — Package 2:
 
 ### Pricing
 
-This package is **100% free** to install and use in **sandboxes and scratch orgs** — no activation required. Build, test, and evaluate the full package at no cost.
+This package is **100% free** to install and use in **sandboxes and scratch orgs** - no activation required. Build, test, and evaluate the full package at no cost.
 
 To use the package in a **production org**, a one-time setup fee is required. There is no recurring payment. Visit the [Stripe Accelerator activation page](https://common-unite.my.site.com/s/stripe-accelerator) to get started.
 
@@ -55,7 +55,7 @@ The heart of this package is three screen components you can drop into any Flow:
 | **Stripe Setup Card** | Displays the same payment form but saves the card for future use without charging it now. Requires a Stripe Customer ID. | Saving a customer's card on file for future invoices, subscriptions, or manual charges. |
 | **Stripe Subscription** | Displays the payment form and creates a recurring subscription with the payment method. Requires a Stripe Customer ID and at least one subscription item. | Setting up recurring billing with configurable products, prices, and billing intervals. |
 
-Each component has a **Custom Property Editor** — a point-and-click configuration panel that appears in the Flow Builder when you select the component. No need to manually type API names or values.
+Each component has a **Custom Property Editor** - a point-and-click configuration panel that appears in the Flow Builder when you select the component. No need to manually type API names or values.
 
 ### What the Payment Form Supports
 
@@ -79,7 +79,7 @@ Each component has a **Custom Property Editor** — a point-and-click configurat
 
 **How to set it up:**
 1. In Flow Builder, add a Screen element and drag the **Stripe Payment** component onto it.
-2. In the property editor, set the **Amount** (in cents — e.g., 5000 for $50.00) and **Capture Method** (automatic or manual).
+2. In the property editor, set the **Amount** (in cents - e.g., 5000 for $50.00) and **Capture Method** (automatic or manual).
 3. Optionally set customer details (name, email, phone, address) to pre-fill the form.
 4. After the screen, use the output variables to store or display the results.
 
@@ -88,7 +88,7 @@ Each component has a **Custom Property Editor** — a point-and-click configurat
 - The Payment Intent ID and Payment Method ID (store these on your records for reference)
 - Card details: brand, last 4 digits, expiration, funding type
 
-**Pre-built flow:** The **Stripe Payment (Collect Payment Form)** flow is ready to use out of the box — just pass in the amount, currency, and optional customer details.
+**Pre-built flow:** The **Stripe Payment (Collect Payment Form)** flow is ready to use out of the box - just pass in the amount, currency, and optional customer details.
 
 **Important:** The amount is always in **cents**. $50.00 = `5000`. The minimum is $0.50 (50 cents).
 
@@ -120,7 +120,7 @@ Each component has a **Custom Property Editor** — a point-and-click configurat
 **Use case:** Set up recurring billing with one or more products.
 
 **How to set it up:**
-1. You need a Stripe Customer ID (same as setup card — use the customer sync subflow or pass one in).
+1. You need a Stripe Customer ID (same as setup card - use the customer sync subflow or pass one in).
 2. Use the **Stripe | Build Subscription Item** action (one or more times) to create your line items. Each item needs a Stripe Product ID, unit price, billing interval (day/week/month/year), and quantity.
 3. Add a Screen element and drag the **Stripe Subscription** component onto it.
 4. Set the **Customer ID** and **Items** collection.
@@ -145,7 +145,7 @@ Each component has a **Custom Property Editor** — a point-and-click configurat
 1. Reads the Opportunity and its line items
 2. Resolves each line item's Stripe Product ID (synced via the product sync automation)
 3. Creates a Stripe Checkout Session
-4. Returns the hosted checkout URL — you can email it, display it, or redirect to it
+4. Returns the hosted checkout URL - you can email it, display it, or redirect to it
 
 After the customer completes checkout, the **Checkout Session Completed** webhook handler updates the Opportunity automatically.
 
@@ -216,7 +216,7 @@ Combines a dynamic record form (from the Flow Tool Kit) with the Stripe payment 
    - For subscriptions: which Lookup field points to the Stripe Product, and which field holds the quantity
 3. Optionally configure: payment type routing (one-time vs. subscription based on a field value), capture method, and UI options
 
-The component shows the form first, then a "Continue to Payment" button. After successful payment, results are written back to the form fields and the record is saved.
+The component shows the form first, then a "Continue to Payment" button. The payment step preloads in the background while the user completes the form, so it appears instantly. After successful payment, results are written back to the form fields, the record is saved, and the Confirmation Message displays (a built-in thank-you message is shown when none is configured).
 
 #### Express Payment
 
@@ -291,8 +291,8 @@ These flows respond to events sent from Stripe to Salesforce via the Stripe Conn
 
 The package ships two versions of each core Screen Flow:
 
-- **Overridable** flows (e.g., "Stripe Payment (Collect Payment Form)") — Use these in production. You can modify them, and they'll still receive non-breaking updates from the package.
-- **Template** flows (e.g., "Template Stripe Payment (Collect Payment Form)") — Read-only reference copies. Clone them to start your own flows from scratch.
+- **Overridable** flows (e.g., "Stripe Payment (Collect Payment Form)") - Use these in production. You can modify them, and they'll still receive non-breaking updates from the package.
+- **Template** flows (e.g., "Template Stripe Payment (Collect Payment Form)") - Read-only reference copies. Clone them to start your own flows from scratch.
 
 ---
 
@@ -327,3 +327,20 @@ The package ships two versions of each core Screen Flow:
 **Key points for admins:**
 - The payment form runs inside a secure iframe for PCI compliance. You don't need to worry about credit card data touching your Salesforce org.
 - The Stripe account (test vs. live) is resolved automatically based on whether you're in a sandbox or production.
+### Embedding the Payment Form on Your Own Website
+
+With Flow Tool Kit base 4.22+, the payment component can be embedded directly on third-party websites (Squarespace, WordPress, custom sites) through the base package's EmbedForm page - the same single-URL iframe pattern used for forms and flows. Use the **Embed Code Generator** (FlowToolKit app) to build the snippet: once this package is installed, the generator offers the **Payment** type and configures it with the same property editor used in Experience Builder.
+
+**Required setup (security):**
+
+1. **Trusted Domains for Inline Frames** - add EVERY website domain that will host the embed under Setup → Session Settings → Trusted Domains for Inline Frames, type *Visualforce Pages*. Framing is blocked for any domain not explicitly listed. Never disable clickjack protection; the per-domain allow-list IS the mechanism.
+2. **reCAPTCHA** - set the Google reCAPTCHA site key in Flow Tool Kit Settings. A publicly embeddable payment page is a card-testing target; pair with Stripe Radar and the Minimum Amount setting (Stripe Payment Accelerator Settings).
+
+**Embed behavior and limitations:**
+
+- Payment methods are restricted to **cards and Link** inside embeds - redirect-based methods (iDEAL, bank redirects) cannot complete inside nested iframes and are excluded automatically. A "Bank" tab may still appear inside embeds: that is Link Instant Bank Payments (Link-native, iframe-safe), not the excluded ACH/redirect bank methods.
+- **Apple Pay is unavailable on embed host domains** unless each client domain is registered and verified with Stripe (the package's domain association only covers your Salesforce domain). See Stripe's payment method domain registration docs.
+- The payment step preloads while the donor completes the form, exactly as on Experience Cloud pages.
+- The embed page and the client site exchange only resize and completion signals - no payment data ever crosses to the host page.
+- **Guest saves report a false 404 that the component absorbs.** Guest-created submissions commit but are invisible to the guest, so the platform's post-save read-back 404s. The payment component treats that signature as success and shows the confirmation. On Flow Tool Kit base 4.22 and older, a transient 'Oops! Something went wrong' toast may still flash when the embed URL is opened top-level; base 4.23 fixes this (cUnite_FormBuilder#580).
+- **Set a Confirmation Message** in the payment component properties to control the success feedback an embedded donor sees after paying; when left blank, a built-in thank-you message is shown (success never renders blank).

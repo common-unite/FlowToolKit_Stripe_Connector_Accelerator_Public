@@ -1,4 +1,4 @@
-# Stripe Connector Accelerator — Implementation Guide
+# Stripe Connector Accelerator - Implementation Guide
 
 Detailed reference for admins implementing the Stripe Connector Accelerator. Covers component inputs and outputs, Flow action parameters, custom fields and objects, configuration settings, and important considerations.
 
@@ -6,7 +6,7 @@ Detailed reference for admins implementing the Stripe Connector Accelerator. Cov
 
 ## Table of Contents
 
-1. [Flow Screen Components — Inputs & Outputs](#1-flow-screen-components--inputs--outputs)
+1. [Flow Screen Components - Inputs & Outputs](#1-flow-screen-components--inputs--outputs)
 2. [Experience Cloud Components](#2-experience-cloud-components)
 3. [Flow Actions (Invocable Actions)](#3-flow-actions-invocable-actions)
 4. [Custom Objects & Settings](#4-custom-objects--settings)
@@ -18,7 +18,7 @@ Detailed reference for admins implementing the Stripe Connector Accelerator. Cov
 
 ---
 
-## 1. Flow Screen Components — Inputs & Outputs
+## 1. Flow Screen Components - Inputs & Outputs
 
 ### 1.1 Stripe Payment
 
@@ -29,7 +29,8 @@ Collects a one-time payment or authorized charge. This is the primary payment co
 | Input | Type | Required | Description |
 |-------|------|----------|-------------|
 | Amount | Number | Yes | Payment amount in **cents**. Example: 5000 = $50.00. Minimum: 50 ($0.50). |
-| Capture Method | Text | Yes | How funds are captured: `automatic` (charge immediately), `automatic_async` (charge immediately with lower latency — recommended, supports all payment methods including ACH), or `manual` (authorize now, capture later). |
+| Capture Method | Text | Yes | How funds are captured: `automatic` (charge immediately), `automatic_async` (charge immediately with lower latency - recommended, supports all payment methods including ACH), or `manual` (authorize now, capture later). |
+| Return URL | Text | No | Where Stripe returns the payer after redirect-based confirmation (e.g., 3D Secure bank redirects). Defaults to the current page URL when blank. Must be 1,900 characters or fewer. |
 | Currency | Text | No | 3-letter currency code (e.g., `usd`, `eur`, `gbp`). Defaults to `usd`. |
 | Description | Text | No | Description that appears on the payment in Stripe. |
 | Customer ID | Text | No | Stripe Customer ID (starts with `cus_`). Optional for payments, but useful for tracking. |
@@ -43,7 +44,7 @@ Collects a one-time payment or authorized charge. This is the primary payment co
 | Address State | Text | No | Billing state/province. |
 | Address Country | Text | No | Billing country code (e.g., `US`, `GB`). |
 | Address Postal Code | Text | No | Billing postal/ZIP code. |
-| Enable Link | Boolean | No | Show Stripe Link — lets returning customers pay with just their email. |
+| Enable Link | Boolean | No | Show Stripe Link - lets returning customers pay with just their email. |
 | Enable Address | Boolean | No | Show an address collection form built into the payment element. |
 | Enable Express Checkout | Boolean | No | Show Apple Pay / Google Pay buttons instead of the standard card form. |
 | Express Checkout Button Type | Text | No | Label on the express checkout button: `pay`, `buy`, `checkout`, `donate`, `book`, `order`, `subscribe`, or `plain`. |
@@ -62,7 +63,7 @@ Collects a one-time payment or authorized charge. This is the primary payment co
 | Charge Id | Text | The Stripe Charge ID for this transaction. |
 | Receipt URL | Text | URL to the Stripe-hosted receipt for this payment. |
 | Processing Fee | Text | Calculated Stripe processing fee in dollars (e.g., `3.30`) based on the custom setting Processing Fee Multiplier and Transaction Fee values. |
-| Net Amount (After Fees) | Text | Payment amount minus processing fees — the amount received after Stripe fees are deducted. |
+| Net Amount (After Fees) | Text | Payment amount minus processing fees - the amount received after Stripe fees are deducted. |
 | Card Brand | Text | Card brand: `visa`, `mastercard`, `amex`, `discover`, etc. |
 | Card Last 4 | Text | Last 4 digits of the card number. |
 | Card Expiration Month | Number | Card expiration month (1-12). |
@@ -175,51 +176,54 @@ Available on Experience Cloud pages. Combines a record form with payment collect
 The modal organizes mappings into sections:
 
 **Payment Details:**
-- **Amount** — Map a Currency field from your object, or set a fixed amount
-- **Description** — Map a Text field
-- **Payment Type** — Map a field whose value determines one-time payment vs. subscription (e.g., a picklist with "Payment" and "Subscription" values)
+- **Amount** - Map a Currency field from your object, or set a fixed amount
+- **Description** - Map a Text field
+- **Payment Type** - Map a field whose value determines one-time payment vs. subscription (e.g., a picklist with "Payment" and "Subscription" values)
 
 **Subscription Schedule** (only used when payment type routes to subscription):
-- **Subscription Product** — Map a Lookup field to Product2 (the Stripe Product ID is pulled from the Product's `Stripe Product Id` field)
-- **Subscription Quantity** — Map a Number field
+- **Subscription Product** - Map a Lookup field to Product2 (the Stripe Product ID is pulled from the Product's `Stripe Product Id` field)
+- **Subscription Quantity** - Map a Number field
 
 **Customer Details:**
-- **Name, Email, Phone** — Map the corresponding fields from your object
+- **Name, Email, Phone** - Map the corresponding fields from your object
 
 **Billing Address:**
-- **Address Line 1, Line 2, City, State, Country, Postal Code** — Map address fields
+- **Address Line 1, Line 2, City, State, Country, Postal Code** - Map address fields
 
 **Payment Outputs** (where to store results after payment):
-- **Payment Intent ID, Payment Method ID, Charge ID** — Map Text fields
-- **Receipt URL** — Map a URL or Text field
-- **Processing Fee** — Map a Currency field. Calculated using the reverse fee formula: `(amount × rate + fixedFee) / (1 - rate)`. This accounts for fee-on-fee when donors cover processing costs.
-- **Card Brand, Last 4, Expiration Month/Year, Funding, Country** — Map Text/Number fields
+- **Payment Intent ID, Payment Method ID, Charge ID** - Map Text fields
+- **Receipt URL** - Map a URL or Text field
+- **Processing Fee** - Map a Currency field. Calculated using the reverse fee formula: `(amount × rate + fixedFee) / (1 - rate)`. This accounts for fee-on-fee when donors cover processing costs.
+- **Card Brand, Last 4, Expiration Month/Year, Funding, Country** - Map Text/Number fields
 
 **Additional Output Mappings** (map Stripe outputs to extra fields):
 
 When a Stripe output value needs to be written to more than one field on the object (e.g., Payment Intent ID mapped to both `Stripe_Payment_Intent_Id__c` and `PaymentIdentifier`), use the Additional Output Mappings section. This accordion section (collapsed by default) provides a repeater where admins can:
 
 1. Select a **Target Field** from the object (fields already mapped in fixed mappings are excluded)
-2. Select a **Stripe Output** parameter — filtered by the target field's data type, with descriptions explaining each output
+2. Select a **Stripe Output** parameter - filtered by the target field's data type, with descriptions explaining each output
 3. Add multiple additional mappings as needed
 
 Available Stripe output parameters include: Payment Intent Id, Payment Method Id, Charge Id, Subscription Id, Setup Intent Id, Receipt URL, Processing Fee, Net Amount (After Fees), and all card and billing details.
 
 #### Other Settings
 
-- **Currency** — ISO currency code
-- **Capture Method** — `automatic_async` (default, recommended by Stripe — supports all payment methods including ACH)
-- **Enable Link** — Stripe Link fast checkout
-- **Enable Address** — Address collection in the payment form
-- **Hide Header** — Hide the payment form header
+- **Currency** - ISO currency code
+- **Capture Method** - `automatic_async` (default, recommended by Stripe - supports all payment methods including ACH)
+- **Return URL** - Where Stripe returns the payer after redirect-based confirmation (e.g., 3D Secure bank redirects). Strongly recommended for embedded payment pages - the raw embed URL is never an appropriate landing page. Defaults to the current page when blank.
+- **Enable Link** - Stripe Link fast checkout
+- **Enable Address** - Address collection in the payment form
+- **Hide Header** - Hide the payment form header
 
 #### Behavior
 
 - The form displays first. The payment component appears after the user clicks "Continue to Payment."
+- The payment step **preloads in the background** while the user completes the form, so it appears instantly on "Continue to Payment" instead of loading on demand.
 - If the **Payment Type** field routes to "subscription", the component creates a subscription instead of a one-time payment.
 - After payment, the results are written back to the mapped output fields (including additional mappings) and the record is saved automatically.
-- If a **Confirmation Message** is configured, it displays after the record saves successfully. If a Receipt URL was captured, a "View Receipt" button opens the Stripe-hosted receipt in a new tab.
-- If the record save fails (e.g., validation rule), the form reappears with a "Retry Save" button. The payment is not re-processed — only the record insert is retried.
+- After the record saves, the **Confirmation Message** displays. When none is configured, a built-in thank-you message is shown - success never renders a blank screen. If a Receipt URL was captured, a "View Receipt" button opens the Stripe-hosted receipt in a new tab.
+- If the record save fails (e.g., validation rule), the form reappears with a "Retry Save" button. The payment is not re-processed - only the record insert is retried. Payment results already stamped on the record (intent ID, card details, status) survive any edits the user makes before retrying.
+- Guest (unauthenticated) saves commit even though the platform reports a "resource does not exist" error on read-back - guest-created records are invisible to their creator. The component recognizes that signature after a captured payment and shows the confirmation instead of a false error.
 
 ---
 
@@ -284,7 +288,7 @@ Creates one subscription line item. Call this action multiple times to build a m
 |--------|------|-------------|
 | Items | Subscription Item Collection | The updated collection with the new item added. Pass this to the next Build Subscription Item call, or to the Stripe Subscription screen component. |
 
-**Example — Building a 2-item subscription:**
+**Example - Building a 2-item subscription:**
 1. First action call: Product = `prod_abc`, Amount = 2999, Interval = `month`, Quantity = 1 → outputs `Items` (1 item)
 2. Second action call: Product = `prod_xyz`, Amount = 999, Interval = `month`, Quantity = 2, Items = `{!Items}` from step 1 → outputs `Items` (2 items)
 3. Pass the final `Items` collection to the Stripe Subscription screen component.
@@ -320,7 +324,7 @@ Adds or updates a key-value pair in a Stripe Metadata object.
 |--------|------|-------------|
 | Metadata | Stripe Metadata | The updated metadata object. Pass this to the payment component's Metadata input or to another Put Metadata call. |
 
-**Example — Attaching a Salesforce Record ID to a payment:**
+**Example - Attaching a Salesforce Record ID to a payment:**
 1. Put Metadata: Key = `salesforce_record_id`, Value = `{!recordId}` → outputs Metadata
 2. Stripe Payment component: Metadata = `{!Metadata}` from step 1
 
@@ -371,7 +375,7 @@ Access these via **Setup > Custom Settings**.
 
 #### Stripe Payment Settings
 
-This setting stores encryption keys used internally for securing payment data in transit. **No admin action is needed** — keys are generated and rotated automatically every hour.
+This setting stores encryption keys used internally for securing payment data in transit. **No admin action is needed** - keys are generated and rotated automatically every hour.
 
 ---
 
@@ -501,7 +505,7 @@ The package uses platform events for asynchronous communication between Salesfor
 | Flow | What It Does | Key Inputs |
 |------|-------------|------------|
 | **Stripe Payment (Collect Payment Form)** | Collects a one-time payment. | Amount, Currency, Customer details |
-| **Stripe Payment (Setup Payment Method)** | Saves a payment method. Entity-aware — works with Account, Contact, Lead, User, or Opportunity. | Record ID |
+| **Stripe Payment (Setup Payment Method)** | Saves a payment method. Entity-aware - works with Account, Contact, Lead, User, or Opportunity. | Record ID |
 | **Stripe Payment (New Subscription)** | Creates a subscription. | Customer ID, Items, Billing parameters |
 | **Stripe Payment (Checkout Session Opportunity)** | Creates a Stripe-hosted checkout page from an Opportunity. | Opportunity record |
 | **Opportunity Generate Invoice** | Creates a Stripe invoice from an Opportunity. | Opportunity record |
@@ -519,7 +523,7 @@ The package uses platform events for asynchronous communication between Salesfor
 
 | Flow | What It Does |
 |------|-------------|
-| **Stripe Create/Update Customer** | Looks up or creates a Stripe Customer. Maps name, email, phone, address. Overridable — you can customize the field mapping. |
+| **Stripe Create/Update Customer** | Looks up or creates a Stripe Customer. Maps name, email, phone, address. Overridable - you can customize the field mapping. |
 | **Stripe Product (Create/Update Price)** | Syncs a PricebookEntry to a Stripe Price. |
 | **Stripe Utility (Sync Product)** | Syncs a Product2 to a Stripe Product. |
 | **Stripe Utility (Sync Pricebook Entry)** | Syncs a PricebookEntry to Stripe. |
@@ -573,7 +577,7 @@ Any other value will cause an error. The interval count multiplies the interval 
 
 ### DateTime Fields for Subscriptions
 
-The Stripe Subscription component accepts DateTime inputs for Cancel At, Billing Cycle Anchor, and Backdate Start Date. These are standard Salesforce DateTime variables. The component converts them to the format Stripe expects automatically — you don't need to do any conversion.
+The Stripe Subscription component accepts DateTime inputs for Cancel At, Billing Cycle Anchor, and Backdate Start Date. These are standard Salesforce DateTime variables. The component converts them to the format Stripe expects automatically - you don't need to do any conversion.
 
 ### Express Checkout (Apple Pay / Google Pay)
 
@@ -593,7 +597,7 @@ The payment form runs inside a **secure iframe**. Credit card numbers, CVVs, and
 
 ### Sync Loop Prevention
 
-The `Stripe Event Last Triggered` field on Account, Contact, Opportunity, OpportunityLineItem, and Product records prevents infinite sync loops. When a record is updated by a Stripe webhook handler, this timestamp is set. The record-triggered flows check this timestamp and skip the sync if the change was just made by a webhook — preventing a back-and-forth loop.
+The `Stripe Event Last Triggered` field on Account, Contact, Opportunity, OpportunityLineItem, and Product records prevents infinite sync loops. When a record is updated by a Stripe webhook handler, this timestamp is set. The record-triggered flows check this timestamp and skip the sync if the change was just made by a webhook - preventing a back-and-forth loop.
 
 ### Overridable Flow Customization
 
@@ -642,14 +646,14 @@ After adding these, the payment component should load normally.
 
 ### "Validation Errors" After Package Upgrade (Overridden Flows)
 
-**Symptom:** After upgrading the Stripe Connector Accelerator package, overridden flows crash with the error: *"The 'X' element in your flow has validation errors."* The flow does not fault — it crashes entirely. Non-overridden flows and newly created flows work fine.
+**Symptom:** After upgrading the Stripe Connector Accelerator package, overridden flows crash with the error: *"The 'X' element in your flow has validation errors."* The flow does not fault - it crashes entirely. Non-overridden flows and newly created flows work fine.
 
-**Cause:** When you override an overridable flow, the overridden version takes a snapshot of the action element definitions. When the managed package upgrades and the underlying Apex classes change, overridden flows may hold stale references that no longer match the updated action definitions. This is a Salesforce platform limitation — overridden flows don't automatically pick up changes to managed package action elements.
+**Cause:** When you override an overridable flow, the overridden version takes a snapshot of the action element definitions. When the managed package upgrades and the underlying Apex classes change, overridden flows may hold stale references that no longer match the updated action definitions. This is a Salesforce platform limitation - overridden flows don't automatically pick up changes to managed package action elements.
 
 **Fix:**
 
 1. Deactivate the overridden flow that is crashing
-2. Open the corresponding original packaged flow (or Template flow) — it will have the updated action definitions
+2. Open the corresponding original packaged flow (or Template flow) - it will have the updated action definitions
 3. Create a new override from the updated original, re-applying your customizations
 4. Activate the new override and delete the old one
 
@@ -673,6 +677,14 @@ After adding these, the payment component should load normally.
 Replace `*.squarespace.com` with the domain of the website hosting your Lightning Out component. Wildcard domains are supported.
 
 **Important:**
-- The iFrame Type must be **Lightning Out** — not Visualforce Pages. These control different CSP headers.
+- The iFrame Type must be **Lightning Out** - not Visualforce Pages. These control different CSP headers.
 - Each third-party platform your organization uses needs its own Trusted Domain entry.
 - The clickjack protection checkbox must be enabled for Trusted Domains to take effect.
+
+### "Remoting request invalid for your session" (Authenticated Users)
+
+**Symptom:** Payments fail for logged-in users with the error *"Remoting request invalid for your session"*. Guest (unauthenticated) users are unaffected, and the same page may work again after a hard refresh.
+
+**Cause:** Earlier package versions allowed Salesforce's CDN to cache the payment page, which could serve a stale CSRF token to authenticated sessions.
+
+**Fix:** Upgrade the package - current versions bypass the CDN cache for authenticated contexts automatically. On older versions, a hard refresh (Cmd/Ctrl+Shift+R) clears the stale token as a temporary workaround.
