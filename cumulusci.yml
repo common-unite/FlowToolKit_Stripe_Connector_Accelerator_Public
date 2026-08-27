@@ -196,7 +196,7 @@ orgs:
             config_file: orgs/npc.json
             days: 7
             namespaced: True
-        feature_stripe-payment-iframe-preload:
+        sprint_2026-08-25-general:
             config_file: orgs/dev.json
-            days: 7
+            days: 30
             namespaced: True
