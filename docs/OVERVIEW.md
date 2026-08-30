@@ -326,7 +326,7 @@ The package ships two versions of each core Screen Flow:
 
 **Key points for admins:**
 - The payment form runs inside a secure iframe for PCI compliance. You don't need to worry about credit card data touching your Salesforce org.
-- The Stripe account (test vs. live) is resolved automatically based on whether you're in a sandbox or production.
+- The Stripe account (test vs. live) is resolved automatically based on whether you're in a sandbox or production. Orgs with more than one connected Stripe account choose per form: set `Stripe Account` on the Form Submission (Pre-fill Template) or pick it in the Dynamic Payment Form property editor.
 ### Embedding the Payment Form on Your Own Website
 
 With Flow Tool Kit base 4.22+, the payment component can be embedded directly on third-party websites (Squarespace, WordPress, custom sites) through the base package's EmbedForm page - the same single-URL iframe pattern used for forms and flows. Use the **Embed Code Generator** (FlowToolKit app) to build the snippet: once this package is installed, the generator offers the **Payment** type and configures it with the same property editor used in Experience Builder.

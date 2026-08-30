@@ -49,8 +49,8 @@ Collects a one-time payment or authorized charge. This is the primary payment co
 | Enable Express Checkout | Boolean | No | Show Apple Pay / Google Pay buttons instead of the standard card form. |
 | Express Checkout Button Type | Text | No | Label on the express checkout button: `pay`, `buy`, `checkout`, `donate`, `book`, `order`, `subscribe`, or `plain`. |
 | Hide Header | Boolean | No | Hides the "Payment Details" header above the form. |
-| Publishable Key | Text | No | Override the auto-detected Stripe publishable key. Usually not needed. |
-| Stripe Account Id | Text | No | Override the auto-detected Stripe Account record. Usually not needed. |
+| Publishable Key (Legacy) | Text | No | Shown only when the screen was saved with a key. The key is resolved from the Stripe Account now; clear the value and save to retire the field. |
+| Stripe Account Id | Text | No | Charge a specific connected Stripe Account record instead of the auto-detected one (multi-account orgs). Enough on its own. |
 
 #### Outputs (what you get back after the user pays)
 
@@ -96,8 +96,8 @@ Saves a customer's payment method for future use without charging them.
 | Enable Address | Boolean | No | Show address collection. |
 | Hide Header | Boolean | No | Hide the form header. |
 | Address fields | Text | No | Pre-fill billing address (Line 1, Line 2, City, State, Country, Postal Code). |
-| Publishable Key | Text | No | Override auto-detected key. |
-| Stripe Account Id | Text | No | Override auto-detected account. |
+| Publishable Key (Legacy) | Text | No | Shown only when the screen was saved with a key; clear it and save to retire the field. |
+| Stripe Account Id | Text | No | Use a specific connected Stripe Account record instead of the auto-detected one. Enough on its own. |
 
 #### Outputs
 
@@ -143,7 +143,7 @@ Creates a recurring subscription and collects the initial payment method.
 | Name, Email, Phone | Text | No | Customer details (pre-fills form). |
 | Enable Address, Hide Header | Boolean | No | UI options. |
 | Address fields | Text | No | Pre-fill billing address. |
-| Publishable Key, Stripe Account Id | Text | No | Override auto-detected values. |
+| Stripe Account Id | Text | No | Use a specific connected Stripe Account record instead of the auto-detected one. Enough on its own; the key is resolved from the account. Publishable Key remains only as a legacy field on screens saved with one. |
 
 #### Outputs
 
@@ -204,7 +204,7 @@ When a Stripe output value needs to be written to more than one field on the obj
 2. Select a **Stripe Output** parameter - filtered by the target field's data type, with descriptions explaining each output
 3. Add multiple additional mappings as needed
 
-Available Stripe output parameters include: Payment Intent Id, Payment Method Id, Charge Id, Subscription Id, Setup Intent Id, Receipt URL, Processing Fee, Net Amount (After Fees), and all card and billing details.
+Available Stripe output parameters include: Payment Intent Id, Payment Method Id, Charge Id, Subscription Id, Setup Intent Id, Stripe Account (the connected account record the payment was made on), Receipt URL, Processing Fee, Net Amount (After Fees), and all card and billing details. On a Form Submission the default profile maps Stripe Account to `Stripe_Account__c`.
 
 #### Other Settings
 
@@ -214,12 +214,14 @@ Available Stripe output parameters include: Payment Intent Id, Payment Method Id
 - **Enable Link** - Stripe Link fast checkout
 - **Enable Address** - Address collection in the payment form
 - **Hide Header** - Hide the payment form header
+- **Stripe Account** - Optional, for orgs with more than one connected Stripe account. Charge this account instead of the auto-detected one. A `Stripe Account` set on the record itself (for example from the Form Template's Pre-fill Template record, or a prefill Flow) takes priority over this setting. After a successful payment the account actually charged is written to the record's `Stripe Account` field.
 
 #### Behavior
 
 - The form displays first. The payment component appears after the user clicks "Continue to Payment."
 - The payment step **preloads in the background** while the user completes the form, so it appears instantly on "Continue to Payment" instead of loading on demand.
 - If the **Payment Type** field routes to "subscription", the component creates a subscription instead of a one-time payment.
+- The Stripe Account is honored even when it becomes known after the payment step has preloaded (for example a prefilled `Stripe Account` that only reaches the component with the saved record): the payment frame reboots on the new account before it is revealed.
 - After payment, the results are written back to the mapped output fields (including additional mappings) and the record is saved automatically.
 - After the record saves, the **Confirmation Message** displays. When none is configured, a built-in thank-you message is shown - success never renders a blank screen. If a Receipt URL was captured, a "View Receipt" button opens the Stripe-hosted receipt in a new tab.
 - If the record save fails (e.g., validation rule), the form reappears with a "Retry Save" button. The payment is not re-processed - only the record insert is retried. Payment results already stamped on the record (intent ID, card details, status) survive any edits the user makes before retrying.
@@ -261,7 +263,7 @@ Returns the correct Stripe Account credentials based on your org type.
 
 | Output | Type | Description |
 |--------|------|-------------|
-| Stripe Account Id | Record ID | The Salesforce record ID for the Stripe Account. Pass this to payment components if you need to override auto-detection. |
+| Stripe Account Id | Record ID | The Salesforce record ID for the Stripe Account. Pass this to payment components, or to Create/Update Customer, to use a specific account instead of auto-detection. |
 | Publishable Key | Text | The Stripe publishable API key. Pass this to payment components if needed. |
 
 **When you need it:** The pre-built flows already call this action. You only need it in custom flows where you want explicit control over which Stripe account to use, or when you need the publishable key for other purposes.
@@ -371,6 +373,8 @@ Access these via **Setup > Custom Settings**.
 | **Test Mode** | When checked, forces test mode even in production. Useful for testing before going live. |
 | **Transaction Fee** | Stripe's flat fee per transaction (default: $0.30). Used to calculate processing fees with the reverse formula: `(amount × rate + fixedFee) / (1 - rate)`. |
 | **Processing Fee Multiplier** | Stripe's percentage rate per transaction (default: 0.029 = 2.9%). Used with Transaction Fee to calculate processing fees that account for fee-on-fee when donors cover costs. |
+
+**Per-account fee terms.** When an org has more than one connected Stripe account with different pricing, set `Processing Fee Multiplier` and `Transaction Fee` on the **Stripe Account** record itself (two fields the package adds to Stripe's `Stripe Account` object; add them to that object's page layout). A Form Submission whose `Stripe Account` is set uses the account's value for each fee term that is greater than 0, otherwise the custom setting, otherwise the default. The fee written back after payment follows the same rule.
 | **Apple Developer Domain Resource** | Name of the static resource containing the Apple Pay domain verification file. Required only if you're enabling Apple Pay on a custom domain. |
 
 #### Stripe Payment Settings
@@ -553,9 +557,11 @@ The payment components and pre-built flows automatically detect which Stripe acc
 - **Sandbox orgs** → Test mode account
 - **Production orgs** → Live mode account
 
-You can override this by:
-- Passing the `Publishable Key` and `Stripe Account Id` inputs explicitly on the screen component
-- Checking **Test Mode** in the Stripe Payment Accelerator Settings custom setting (forces test mode everywhere)
+Auto-detection keeps the last connected account it finds for that mode, so an org with more than one connected account should choose explicitly. In order of priority:
+- **`Stripe Account` on the Form Submission** - seed it from the Form Template's Pre-fill Template record or a prefill Flow. The Dynamic Payment Form reads it before loading and writes the account actually charged back to it on success. Add the field to your Form Submission page layout to see it on the record.
+- **Stripe Account in the Dynamic Payment Form property editor** - a per-page default, used when the record carries none.
+- **`Stripe Account Id` on the Flow screen components** (and on Create/Update Customer) - the publishable key is resolved from the account, so the Id is enough on its own.
+- Checking **Test Mode** in the Stripe Payment Accelerator Settings custom setting forces test mode for auto-detection everywhere. An explicitly chosen account is used exactly as chosen; one that is not connected fails with a clear error before the payment form renders.
 
 ### Customer ID Requirements
 
