@@ -124,13 +124,6 @@ tasks:
         options:
             required_org_code_coverage_percent: 75
 
-    scan_csv:
-        description: Scan a CSV file for a specific value
-        class_path: tasks.ScanCSVTask.ScanCSVTask
-        options:
-            csv_file_path: myFile.csv
-            value_to_scan: Book
-
 flows:
 
     dev_org:
@@ -252,15 +245,6 @@ flows:
                 task: github_copy_subtree
                 options:
                     tag_name: "latest"
-
-    testing:
-        steps:
-            1:
-                task: scan_csv
-            2:
-                task: log
-                options:
-                    line: $org_config.found
 
 orgs:
     scratch:
