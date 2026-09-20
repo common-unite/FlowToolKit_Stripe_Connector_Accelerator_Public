@@ -98,6 +98,16 @@ tasks:
         options:
             package_name: "Flow Tool Kit: Stripe Connector Accelerator"
 
+    # Publishes to MetaDeploy against the PUBLIC mirror. The release flow runs in
+    # this private repo, and the product is registered against the _Public repo, so
+    # the stock metadeploy_publish would look the product up by the wrong url.
+    metadeploy_publish_public:
+        class_path: tasks.metadeploy_publish_public.PublishPublic
+        description: Publish a MetaDeploy version, resolving the product against the public mirror repo.
+        options:
+            public_repo_url: "https://github.com/common-unite/FlowToolKit_Stripe_Connector_Accelerator_Public"
+            publish: True
+
     export_form:
         class_path: cci_flowtoolkit_tasks.export_form.ExportFormMetadata
 
@@ -245,6 +255,14 @@ flows:
                 task: github_copy_subtree
                 options:
                     tag_name: "latest"
+            # After the mirror has published the tag to the public repo, publish
+            # that same tag to MetaDeploy so the installer stops drifting behind
+            # the releases. Dependency versions are frozen at publish time, so a
+            # release that is never published keeps handing subscribers old pins.
+            95:
+                task: metadeploy_publish_public
+                options:
+                    tag: ^^github_release.tag_name
 
 orgs:
     scratch:
