@@ -7,8 +7,15 @@ project:
         api_version: '65.0'
     dependencies:
         - github: 'https://github.com/common-unite/Flow_Tool_Kit_Public'
+        # package_name and version_number are display only (install still resolves by
+        # version_id). Without them MetaDeploy shows "Install Unknown Package 04t...".
+        # Names match what admins see under Installed Packages in Setup.
         - version_id: 04tRN000004ZhkXYAS
+          package_name: "Stripe app for Salesforce Platform"
+          version_number: "1.25.0.1"
         - version_id: 04t4x0000003MzaAAE
+          package_name: "Stripe Universal Connector Extension (2022-11-15)"
+          version_number: "1.0.1.1"
     git:
     source_format: sfdx
 
