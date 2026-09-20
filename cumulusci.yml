@@ -12,7 +12,82 @@ project:
     git:
     source_format: sfdx
 
+plans:
+    # MetaDeploy plans. Frozen steps carry options, checks and ui_options only, so
+    # ignore_failure never reaches the worker: every step must succeed on its own.
+    # Gates sit on task steps because checks on a flow step are dropped at freeze time.
+    install:
+        slug: install
+        title: Install the Stripe Connector Accelerator
+        tier: primary
+        preflight_message: "Installs the Stripe Connector Accelerator together with the packages it depends on. Have your Stripe account ready: you connect it after the install finishes."
+        checks:
+            - when: "not tasks.check_lws_enabled()['is_enabled']"
+              action: error
+              message: "Lightning Web Security (LWS) must be enabled. Go to Setup > Session Settings and enable 'Use Lightning Web Security for Lightning web components'. Without LWS the payment forms degrade badly on large datasets."
+            - when: "not tasks.check_enhanced_email()['is_enabled']"
+              action: error
+              message: "Enhanced Email must be enabled. Go to Setup > Enhanced Email to enable it. Flow Tool Kit requires Enhanced Email as a package dependency."
+            - when: "tasks.check_stripe_connector_installed()['is_installed']"
+              action: warn
+              message: "The Stripe Connector Accelerator is already installed in this org. To move to a newer version, use the Upgrade plan instead."
+        steps:
+            1:
+                flow: dependencies
+                ui_options:
+                    description: "Installs Flow Tool Kit, Stripe Flow Payments and the Stripe Universal Connector Extension at the versions this release was built against. Packages the org already has at that version are skipped."
+            2:
+                task: install_managed
+                ui_options:
+                    description: "Installs the Stripe Connector Accelerator managed package: the payment forms, the Stripe payment components and the supporting flows. Skipped automatically if this exact version is already installed."
+            3:
+                task: update_admin_profile
+                ui_options:
+                    description: "Grants the System Administrator profile access to the Stripe Connector Accelerator objects, fields, Apex classes and pages. The package ships with permissions closed, so admins need this to configure payment forms right after install. Safe to re-run."
+
+    upgrade:
+        slug: upgrade
+        title: Upgrade the Stripe Connector Accelerator
+        tier: additional
+        preflight_message: "Upgrades the Stripe Connector Accelerator and its dependencies to the latest version. Your forms, form templates and permission sets are not touched."
+        checks:
+            - when: "not tasks.check_stripe_connector_installed()['is_installed']"
+              action: error
+              message: "The Stripe Connector Accelerator is not installed in this org yet. Run the Install plan instead."
+            - when: "not tasks.check_lws_enabled()['is_enabled']"
+              action: error
+              message: "Lightning Web Security (LWS) must be enabled. Go to Setup > Session Settings and enable 'Use Lightning Web Security for Lightning web components'."
+        steps:
+            1:
+                task: update_dependencies
+                ui_options:
+                    description: "Upgrades Flow Tool Kit, Stripe Flow Payments and the Stripe Universal Connector Extension to the versions this release was built against, where the org is behind."
+            2:
+                task: install_managed
+                ui_options:
+                    description: "Upgrades the Stripe Connector Accelerator managed package. Skipped automatically if this exact version is already installed."
+            3:
+                task: update_admin_profile
+                ui_options:
+                    description: "Grants the System Administrator profile access to anything new in this version. Safe to re-run."
+
 tasks:
+
+    # Preflight checks for the MetaDeploy plans. Vendored into tasks/ because the worker
+    # runs stock CumulusCI and imports only from this repo, not cci_flowtoolkit_tasks.
+    check_lws_enabled:
+        class_path: tasks.check_lws_enabled.CheckLWSEnabled
+        description: Preflight - is Lightning Web Security enabled?
+
+    check_enhanced_email:
+        class_path: tasks.check_enhanced_email.CheckEnhancedEmailEnabled
+        description: Preflight - is Enhanced Email enabled?
+
+    check_stripe_connector_installed:
+        class_path: tasks.check_package_installed.CheckPackageInstalled
+        description: Preflight - is the Stripe Connector Accelerator already installed? Queried by package name because the package shares the FlowToolKit namespace with the base.
+        options:
+            package_name: "Flow Tool Kit: Stripe Connector Accelerator"
 
     export_form:
         class_path: cci_flowtoolkit_tasks.export_form.ExportFormMetadata
@@ -23,7 +98,7 @@ tasks:
             branch: "main"
             create_release: true
             release_body: true
-            include: [ "cumulusci.yml","sfdx-project.json","orgs/","README.md","docs/" ]
+            include: [ "cumulusci.yml","sfdx-project.json","orgs/","README.md","docs/","tasks/" ]
 
     robot:
         options:
@@ -195,8 +270,4 @@ orgs:
         npc:
             config_file: orgs/npc.json
             days: 7
-            namespaced: True
-        sprint_2026-08-28:
-            config_file: orgs/dev.json
-            days: 30
             namespaced: True
