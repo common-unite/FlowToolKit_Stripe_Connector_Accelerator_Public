@@ -1,5 +1,6 @@
 {
   "orgName": "Flow Tool Kit: Stripe Connector Accelerator - Feature Test Org",
+  "release": "previous",
   "edition": "Developer",
   "settings": {
     "lightningExperienceSettings": {

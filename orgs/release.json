@@ -1,5 +1,6 @@
 {
   "orgName": "Flow Tool Kit: Stripe Connector Accelerator - Release Test Org",
+  "release": "previous",
   "edition": "Enterprise",
   "settings": {
     "lightningExperienceSettings": {
@@ -16,7 +17,13 @@
       "sessionSettings": {
         "forceRelogin": false
       }
+    },
+    "communitiesSettings": {
+      "enableCommunityWorkspaces": true,
+      "enableNetworksEnabled": true
     }
   },
-  "features": []
+  "features": [
+    "Communities"
+  ]
 }
